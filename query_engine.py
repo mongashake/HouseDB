@@ -23,9 +23,8 @@ class QueryEngine:
         result = {'totalCount': 0}
         queryset = self.process_filters(q)
         result['totalCount'] = len(queryset)
-        if group := q.get('groupedBy'):  # single field for now
-            groups = self.process_groupby(group, queryset)
-            result[group] = groups
+        if groups := q.get('groupedBy'):
+            result = self.process_groupby(groups, queryset)
         return result
 
     def process_filters(self, q):
@@ -38,22 +37,22 @@ class QueryEngine:
                 queryset = queryset.intersection(self.index.filter(k, v))
         return queryset
 
-    def process_groupby(self, group, queryset):
-        groups = self.index.get_group(group)
-        for k, v in groups.items():
-            groups[k] = len(queryset.intersection(v))
-        return groups
+    def process_groupby(self, groups, queryset):
+        return self.group_attr(queryset, groups)
 
-    # def group_attr(self, queryset, group):
-    #     qs = queryset
-    #     res = {}
-    #     for k, v in qs.items():
-    #         res[k] = self.explode_set_by_group(v, group)
-    #     return res
-    #
-    # def explode_set_by_group(self, s, group):
-    #     from collections import defaultdict
-    #     d = defaultdict(set)
-    #     for item in s:
-    #         d[getattr(item, group)].add(item)
-    #     return d
+    def group_attr(self, queryset, groups, pos=0):
+        res = {}
+        if pos == len(groups):
+            return len(queryset)
+        group = groups[pos]
+        inner_group = self.explode_set_by_group(queryset, group)
+        for k, v in inner_group.items():
+            res[k] = self.group_attr(v, groups, pos+1)
+        return res
+
+    def explode_set_by_group(self, s, group):
+        from collections import defaultdict
+        d = defaultdict(set)
+        for item in s:
+            d[getattr(self.interface.inventory.inventory[item], group, None)].add(item)
+        return d
