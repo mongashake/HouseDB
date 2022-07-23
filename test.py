@@ -15,7 +15,10 @@ for product in products:
     inter.add_product(product)
 
 q = {'filter': {'category': 'book'}}
-inter.query(q)
+print(inter.query(q))
 
-q = {'filter': {'category': 'book'}, 'groupedBy': 'subCategory'}
-inter.query(q)
+q = {'filter': {'category': 'book', 'price': 200}, 'groupedBy': 'subCategory'}
+print(inter.query(q))
+
+q = {'filter': {'category': 'book'}, 'groupedBy': 'price_range'}
+print(inter.query(q))

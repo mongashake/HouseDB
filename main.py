@@ -1,3 +1,4 @@
+import json
 from index import InvertedIndex
 from query_engine import QueryEngine
 
@@ -21,4 +22,4 @@ class Main:
         return p
 
     def query(self, q):
-        return self.engine.query(q)
+        return json.dumps(self.engine.query(q))

@@ -6,6 +6,8 @@ class InvertedIndex:
 
     def __init__(self):
         self._index = defaultdict(lambda: defaultdict(set))
+        for prange in self.PRICE_RANGE:
+            self._index['price_range'][prange]  # noqa. used to init ranges.
 
     @property
     def index(self):

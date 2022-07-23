@@ -23,9 +23,9 @@ class QueryEngine:
         result = {'totalCount': 0}
         queryset = self.process_filters(q)
         result['totalCount'] = len(queryset)
-        group = q.get('groupedBy')  # single field for now
-        groups = self.process_groupby(group, queryset)
-        result[group] = groups
+        if group := q.get('groupedBy'):  # single field for now
+            groups = self.process_groupby(group, queryset)
+            result[group] = groups
         return result
 
     def process_filters(self, q):
