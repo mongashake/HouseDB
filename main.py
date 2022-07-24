@@ -1,11 +1,11 @@
 import json
 from index import InvertedIndex
+from inventory import Inventory
 from query_engine import QueryEngine
 
 
 class Main:
     def __init__(self):
-        from inventory import Inventory
         self.inventory = Inventory()
         self.index = InvertedIndex()
         self._engine = None
